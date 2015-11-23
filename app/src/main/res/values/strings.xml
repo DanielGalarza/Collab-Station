@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Collaboration Station</string>
+    <string name="header">Welcome!</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="shoot">Shoot</string>
+    <string name="splash_title">Collaboration Station</string>
+    <string name="names">Made By Daniel And Dustin</string>
+</resources>
