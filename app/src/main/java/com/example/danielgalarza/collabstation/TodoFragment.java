@@ -13,23 +13,41 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import java.util.UUID;
+
 /**
+ * Fragment for detail view of todoActivity
+ *
  * Created by dustin on 11/25/15.
  */
 public class TodoFragment extends Fragment {
+
+    private static final String ARG_TODO_ID = "todo_id";
 
     private Todo mTodo;
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mTaskCompleteCheckBox;
 
-    public TodoFragment() {
+    // call newInstance when creating a TodoFragment
+    public static TodoFragment newInstance(UUID todoID) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_TODO_ID, todoID);
+
+        TodoFragment fragment = new TodoFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTodo = new Todo();
+
+        // retrieve intent's extra from todoActivity to display detail view of task item clicked
+        //UUID todoID = (UUID) getActivity().getIntent().getSerializableExtra(TodoActivity.EXTRA_TODO_ID);
+        // pass as Bundle instead of single extra (above)
+        UUID todoID = (UUID) getArguments().getSerializable(ARG_TODO_ID);
+        mTodo = TodoLab.get(getActivity()).getTodo(todoID);
     }
 
     @Override
@@ -38,6 +56,7 @@ public class TodoFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_todo, container, false);
 
         mTitleField = (EditText) rootView.findViewById(R.id.todo_title);
+        mTitleField.setText(mTodo.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -63,6 +82,7 @@ public class TodoFragment extends Fragment {
 
         //wire up checkbox for completed task items
         mTaskCompleteCheckBox = (CheckBox) rootView.findViewById(R.id.todo_complete);
+        mTaskCompleteCheckBox.setChecked(mTodo.isTodoComplete());
         mTaskCompleteCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

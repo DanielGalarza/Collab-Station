@@ -1,5 +1,6 @@
 package com.example.danielgalarza.collabstation;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -40,16 +42,26 @@ public class TodoListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
     private void updateUI() {
         TodoLab todoLab = TodoLab.get(getActivity());
         List<Todo> todos = todoLab.getTodos();
 
-        mAdapter = new TodoAdapter(todos);
-        mTodoRecyclerView.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            mAdapter = new TodoAdapter(todos);
+            mTodoRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     // custom ViewHolder maintains reference to view (TextView)
-    private class TodoHolder extends RecyclerView.ViewHolder {
+    private class TodoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private Todo mTodo;
         private TextView mTitleTextView;
@@ -58,10 +70,12 @@ public class TodoListFragment extends Fragment {
 
         public TodoHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
 
             mTitleTextView = (TextView)itemView.findViewById(R.id.list_item_todo_title_text_view);
             mDateTextView = (TextView)itemView.findViewById(R.id.list_item_todo_date_text_view);
             mTaskCompleteCheckBox = (CheckBox)itemView.findViewById(R.id.list_item_todo_complete_check_box);
+
         }
 
         public void bindTodo(Todo todo) {
@@ -70,6 +84,18 @@ public class TodoListFragment extends Fragment {
             mDateTextView.setText(mTodo.getDate().toString());
             mTaskCompleteCheckBox.setChecked(mTodo.isTodoComplete());
         }
+
+        @Override
+        public void onClick(View v) {
+            // For testing:
+            //Toast.makeText(getActivity(), mTodo.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+
+            //Start an instance of TodoActivity from within this fragment
+            //Intent intent = new Intent(getActivity(), TodoActivity.class);
+            Intent intent = TodoActivity.newIntent(getActivity(), mTodo.getId());
+            startActivity(intent);
+        }
+
     }
 
     // custom Adapter
