@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 fragmentClass = ChatFragment.class;
                 break;
             case R.id.nav_todo_fragment:
-                fragmentClass = TodoFragment.class;
+                fragmentClass = TodoListFragment.class;
                 break;
             case R.id.nav_third_fragment:
                 fragmentClass = OtherFragment.class; ///////////// LEFT OVER FRAG

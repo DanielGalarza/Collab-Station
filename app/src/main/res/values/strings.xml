@@ -6,4 +6,9 @@
     <string name="shoot">Shoot</string>
     <string name="splash_title">Collaboration Station</string>
     <string name="names">Made By Daniel And Dustin</string>
+    // TODO List stuff:
+    <string name="todo_title_hint">Enter a title for todo item</string>
+    <string name="todo_title_label">Title</string>
+    <string name="todo_details_label">Details</string>
+    <string name="todo_complete_label">Task Complete</string>
 </resources>
