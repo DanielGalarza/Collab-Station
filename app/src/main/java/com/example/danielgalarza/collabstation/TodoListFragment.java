@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.List;
@@ -23,7 +24,6 @@ import java.util.List;
 
 public class TodoListFragment extends Fragment {
 
-    // Nothing yet
 
     private RecyclerView mTodoRecyclerView;
     private TodoAdapter mAdapter;
@@ -51,12 +51,24 @@ public class TodoListFragment extends Fragment {
     // custom ViewHolder maintains reference to view (TextView)
     private class TodoHolder extends RecyclerView.ViewHolder {
 
-        public TextView mTitleTextView;
+        private Todo mTodo;
+        private TextView mTitleTextView;
+        private TextView mDateTextView;
+        private CheckBox mTaskCompleteCheckBox;
 
         public TodoHolder(View itemView) {
             super(itemView);
 
-            mTitleTextView = (TextView) itemView;
+            mTitleTextView = (TextView)itemView.findViewById(R.id.list_item_todo_title_text_view);
+            mDateTextView = (TextView)itemView.findViewById(R.id.list_item_todo_date_text_view);
+            mTaskCompleteCheckBox = (CheckBox)itemView.findViewById(R.id.list_item_todo_complete_check_box);
+        }
+
+        public void bindTodo(Todo todo) {
+            mTodo = todo;
+            mTitleTextView.setText(mTodo.getTitle());
+            mDateTextView.setText(mTodo.getDate().toString());
+            mTaskCompleteCheckBox.setChecked(mTodo.isTodoComplete());
         }
     }
 
@@ -73,14 +85,14 @@ public class TodoListFragment extends Fragment {
         @Override
         public TodoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            View view = layoutInflater.inflate(R.layout.list_item_todo, parent, false);
             return new TodoHolder(view);
         }
 
         @Override
         public void onBindViewHolder(TodoHolder holder, int position) {
             Todo todo = mTodos.get(position);
-            holder.mTitleTextView.setText(todo.getTitle());
+            holder.bindTodo(todo);
         }
 
         @Override
