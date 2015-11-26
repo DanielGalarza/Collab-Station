@@ -56,7 +56,14 @@ public class TodoPagerActivity extends FragmentActivity {
 
         });
 
-    }
+        for (int i = 0; i < mTodos.size(); i++) {
+            if (mTodos.get(i).getId().equals(todoID)) {
+                mViewPager.setCurrentItem(i);
+                break;
+            }
+        }
+
+    } // end onCreate
 
 
-}
+} // end TodoPagerActivity
