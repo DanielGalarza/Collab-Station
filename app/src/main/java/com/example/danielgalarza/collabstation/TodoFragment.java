@@ -1,7 +1,10 @@
 package com.example.danielgalarza.collabstation;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -13,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -23,6 +27,9 @@ import java.util.UUID;
 public class TodoFragment extends Fragment {
 
     private static final String ARG_TODO_ID = "todo_id";
+    private static final String DIALOG_DATE = "DialogDate";
+
+    private static final int REQUEST_DATE = 0;
 
     private Todo mTodo;
     private EditText mTitleField;
@@ -76,9 +83,19 @@ public class TodoFragment extends Fragment {
 
         //wire up button to select deadline date
         mDateButton = (Button) rootView.findViewById(R.id.todo_date);
-        mDateButton.setText(mTodo.getDate().toString());
-        mDateButton.setText(DateFormat.format("EEEE, MMM dd, yyyy", mTodo.getDate()).toString());
-        mDateButton.setEnabled(false);
+        //mDateButton.setText(mTodo.getDate().toString());
+        updateDate();
+        //mDateButton.setEnabled(false);
+        mDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager manager = getFragmentManager();
+                //DatePickerFragment dialog = new DatePickerFragment();
+                DatePickerFragment dialog = DatePickerFragment.newInstance(mTodo.getDate());
+                dialog.setTargetFragment(TodoFragment.this, REQUEST_DATE); // passing data
+                dialog.show(manager, DIALOG_DATE);
+            }
+        });
 
         //wire up checkbox for completed task items
         mTaskCompleteCheckBox = (CheckBox) rootView.findViewById(R.id.todo_complete);
@@ -93,7 +110,24 @@ public class TodoFragment extends Fragment {
 
         //setContentView(R.layout.fragment_todo);
         return rootView;
+
+    } // end onCreateView
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if (requestCode == REQUEST_DATE) {
+            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            mTodo.setDate(date);
+            updateDate();
+        }
     }
 
+    private void updateDate() {
+        mDateButton.setText(mTodo.getDate().toString());
+        mDateButton.setText(DateFormat.format("EEEE, MMM dd, yyyy", mTodo.getDate()).toString());
+    }
 
-}
+} // end TodoFragment

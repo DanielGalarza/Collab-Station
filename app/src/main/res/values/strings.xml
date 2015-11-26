@@ -11,4 +11,5 @@
     <string name="todo_title_label">Title</string>
     <string name="todo_details_label">Details</string>
     <string name="todo_complete_label">Task Complete</string>
+    <string name="date_picker_title">Task Deadline:</string>
 </resources>
