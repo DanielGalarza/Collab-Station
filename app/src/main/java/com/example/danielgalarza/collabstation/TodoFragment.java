@@ -9,12 +9,14 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Date;
 import java.util.UUID;
@@ -112,6 +114,25 @@ public class TodoFragment extends Fragment {
         return rootView;
 
     } // end onCreateView
+
+    /** FOR REMOVING TASK ITEMS **
+    @Override
+    public boolean onOptionItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_delete_todo:
+                // if item exists delete it
+                if (mTodo != null) {
+                    Toast.makeText(getActivity(), "Deleting this task", Toast.LENGTH_SHORT).show();
+                    TodoLab.get(getActivity()).removeTodo(mTodo);
+                    // call finish on TodoFragment's hosting activity
+                    getActivity().finish();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    **/
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

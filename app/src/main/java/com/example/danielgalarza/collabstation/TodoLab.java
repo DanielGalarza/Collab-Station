@@ -45,6 +45,10 @@ public class TodoLab {
         mTodos.add(t);
     }
 
+    public void removeTodo(Todo t) {
+        mTodos.remove(t);
+    }
+
     public List<Todo> getTodos() {
         return mTodos;
     }

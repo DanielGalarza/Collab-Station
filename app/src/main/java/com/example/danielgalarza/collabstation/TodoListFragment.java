@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 //import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 //import android.widget.Toast;
 
 import java.util.List;
@@ -31,10 +33,12 @@ import java.util.List;
 
 public class TodoListFragment extends Fragment {
 
+    private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
 
     private RecyclerView mTodoRecyclerView;
     private TodoAdapter mAdapter;
     private int mLastAdapterClickPosition = -1;
+    private boolean mSubtitleVisible;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,10 @@ public class TodoListFragment extends Fragment {
         mTodoRecyclerView = (RecyclerView) view.findViewById(R.id.todo_recycler_view);
         mTodoRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        if (savedInstanceState != null) {
+            mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
+        }
+
         updateUI();
 
         return view;
@@ -60,10 +68,25 @@ public class TodoListFragment extends Fragment {
         updateUI();
     }
 
+    /** UNNECESSARY OVERRIDE **
+    @Override
+    public void onSavedInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVED_SUBTITLE_VISIBLE, mSubtitleVisible);
+    }
+    **/
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_todo_list, menu);
+
+        MenuItem subtitleItem = menu.findItem(R.id.menu_item_show_subtitle);
+        if (mSubtitleVisible) {
+            subtitleItem.setTitle(R.string.hide_subtitle);
+        } else {
+            subtitleItem.setTitle(R.string.show_subtitle);
+        }
     }
 
     @Override
@@ -75,9 +98,28 @@ public class TodoListFragment extends Fragment {
                 Intent intent = TodoPagerActivity.newIntent(getActivity(), todo.getId());
                 startActivity(intent);
                 return true;
+            case R.id.menu_item_show_subtitle:
+                mSubtitleVisible = !mSubtitleVisible;
+                getActivity().invalidateOptionsMenu();
+                updateSubtitle();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    private void updateSubtitle() {
+        TodoLab todoLab = TodoLab.get(getActivity());
+        int todoCount = todoLab.getTodos().size();
+        String subtitle = getString(R.string.subtitle_format, todoCount);
+
+        if (!mSubtitleVisible) {
+            subtitle = null;
+        }
+
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().setSubtitle(subtitle);
     }
 
     private void updateUI() {
@@ -96,6 +138,7 @@ public class TodoListFragment extends Fragment {
                 mLastAdapterClickPosition = -1;
             }
         }
+        updateSubtitle();
     }
 
     // custom ViewHolder maintains reference to view (TextView)
