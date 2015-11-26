@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 //import android.widget.Toast;
 
 import java.util.List;
@@ -146,6 +145,7 @@ public class TodoListFragment extends Fragment {
 
         private Todo mTodo;
         private TextView mTitleTextView;
+        private TextView mDescriptionView;
         private TextView mDateTextView;
         private CheckBox mTaskCompleteCheckBox;
 
@@ -154,6 +154,7 @@ public class TodoListFragment extends Fragment {
             itemView.setOnClickListener(this);
 
             mTitleTextView = (TextView)itemView.findViewById(R.id.list_item_todo_title_text_view);
+            mDescriptionView = (TextView)itemView.findViewById(R.id.list_item_todo_description_view);
             mDateTextView = (TextView)itemView.findViewById(R.id.list_item_todo_date_text_view);
             mTaskCompleteCheckBox = (CheckBox)itemView.findViewById(R.id.list_item_todo_complete_check_box);
 
@@ -162,6 +163,7 @@ public class TodoListFragment extends Fragment {
         public void bindTodo(Todo todo) {
             mTodo = todo;
             mTitleTextView.setText(mTodo.getTitle());
+            mDescriptionView.setText(mTodo.getDescription());
             mDateTextView.setText(DateFormat.format("EEEE, MMM dd, yyyy", mTodo.getDate()).toString());
             mTaskCompleteCheckBox.setChecked(mTodo.isTodoComplete());
         }

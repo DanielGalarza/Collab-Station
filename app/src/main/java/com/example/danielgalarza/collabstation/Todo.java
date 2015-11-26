@@ -11,6 +11,7 @@ public class Todo {
 
     private UUID mId;
     private String mTitle;
+    private String mDescription;
     private Date mDate;
     private SimpleDateFormat mFormattedDate;
 
@@ -37,6 +38,14 @@ public class Todo {
 
     public void setTitle(String title) {
         mTitle = title;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public void setDescription(String description) {
+        mDescription = description;
     }
 
     public Date getDate() {

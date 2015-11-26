@@ -2,9 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:background="#BAE7FA"
+              android:layout_marginBottom="1dp">
 
     <CheckBox
+        android:layout_marginTop="24dp"
+        android:layout_marginRight="14dp"
         android:id="@+id/list_item_todo_complete_check_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,5 +33,14 @@
         android:layout_below="@+id/list_item_todo_title_text_view"
         android:padding="4dp"
         tools:text="Todo Task Deadline"/>
+
+    <TextView
+        android:id="@+id/list_item_todo_description_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/list_item_todo_date_text_view"
+        android:padding="4dp"
+        android:textStyle="italic"
+        tools:text="Description of task"/>
 
 </RelativeLayout>
