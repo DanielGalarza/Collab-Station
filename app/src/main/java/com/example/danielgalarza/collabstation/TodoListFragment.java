@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 import java.util.List;
 
@@ -29,6 +29,7 @@ public class TodoListFragment extends Fragment {
 
     private RecyclerView mTodoRecyclerView;
     private TodoAdapter mAdapter;
+    private int mLastAdapterClickPosition = -1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,7 +57,13 @@ public class TodoListFragment extends Fragment {
             mAdapter = new TodoAdapter(todos);
             mTodoRecyclerView.setAdapter(mAdapter);
         } else {
-            mAdapter.notifyDataSetChanged();
+            //mAdapter.notifyDataSetChanged();
+            if (mLastAdapterClickPosition < 0) {
+                mAdapter.notifyDataSetChanged();
+            } else {
+                mAdapter.notifyItemChanged(mLastAdapterClickPosition);
+                mLastAdapterClickPosition = -1;
+            }
         }
     }
 
@@ -90,9 +97,10 @@ public class TodoListFragment extends Fragment {
             // For testing:
             //Toast.makeText(getActivity(), mTodo.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
 
-            //Start an instance of TodoActivity from within this fragment
+            //Start an instance of TodoActivity from within this fragment using one of these three methods
             //Intent intent = new Intent(getActivity(), TodoActivity.class);
-            Intent intent = TodoActivity.newIntent(getActivity(), mTodo.getId());
+            //Intent intent = TodoActivity.newIntent(getActivity(), mTodo.getId());
+            Intent intent = TodoPagerActivity.newIntent(getActivity(), mTodo.getId());
             startActivity(intent);
         }
 
