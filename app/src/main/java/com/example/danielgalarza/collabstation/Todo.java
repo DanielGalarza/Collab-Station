@@ -13,6 +13,7 @@ public class Todo {
     private String mTitle;
     private Date mDate;
     private SimpleDateFormat mFormattedDate;
+
     private boolean mTodoComplete;
 
 

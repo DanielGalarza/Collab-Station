@@ -29,13 +29,20 @@ public class TodoLab {
     // private constructor
     private TodoLab(Context context) {
         mTodos = new ArrayList<>();
+
         // create 50 generic task items
+        /** FOR TESTING PURPOSES **
         for (int i = 1; i < 51; i++) {
             Todo todo = new Todo();
             todo.setTitle("Todo Task #" + i);
             todo.setTodoComplete(i % 2 == 0); // Every other checked
             mTodos.add(todo);
         }
+        **/
+    }
+
+    public void addTodo(Todo t) {
+        mTodos.add(t);
     }
 
     public List<Todo> getTodos() {

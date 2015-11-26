@@ -126,7 +126,7 @@ public class TodoFragment extends Fragment {
     }
 
     private void updateDate() {
-        mDateButton.setText(mTodo.getDate().toString());
+        //mDateButton.setText(mTodo.getDate().toString());
         mDateButton.setText(DateFormat.format("EEEE, MMM dd, yyyy", mTodo.getDate()).toString());
     }
 

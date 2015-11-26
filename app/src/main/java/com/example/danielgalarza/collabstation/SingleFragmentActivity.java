@@ -2,8 +2,8 @@ package com.example.danielgalarza.collabstation;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 
 /**
  * Abstract class: reusable class used to avoid typing the same code many places in multiple activities
@@ -13,7 +13,7 @@ import android.support.v4.app.FragmentManager;
  * Created by dustin on 11/25/15.
  */
 
-public abstract class SingleFragmentActivity extends FragmentActivity {
+public abstract class SingleFragmentActivity extends AppCompatActivity {
 
     protected abstract Fragment createFragment();
 
