@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">Collaboration Station</string>
     <string name="header">Welcome!</string>
     <string name="drawer_open">Open navigation drawer</string>
@@ -6,4 +7,21 @@
     <string name="shoot">Shoot</string>
     <string name="splash_title">Collaboration Station</string>
     <string name="names">Made By Daniel And Dustin</string>
+   
+    // TODO List stuff:
+    <string name="todo_title_hint">Enter a title for todo item</string>
+    <string name="todo_title_label">Title</string>
+    <string name="todo_details_label">Details</string>
+    <string name="todo_description">Description</string>
+    <string name="todo_complete_label">Task Complete</string>
+    <string name="date_picker_title">Task Deadline:</string>
+    <string name="new_todo">New Item</string>
+    <string name="delete_todo">Delete Item</string>
+    <string name="show_subtitle">Show Subtitle</string>
+    <string name="hide_subtitle">Hide Subtitle</string>
+    <string name="subtitle_format">%1$s todo items</string>
+    <string name="back_btn">Back to list</string>
+    <string name="delete_btn">Delete this item</string>
+
+
 </resources>
