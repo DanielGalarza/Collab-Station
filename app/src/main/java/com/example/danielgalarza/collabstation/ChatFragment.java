@@ -24,7 +24,6 @@ import java.util.Random;
  */
 public class ChatFragment extends android.support.v4.app.Fragment {
 
-
     private Firebase mFirebase;
     private ListView mMessagesView;
     private FirebaseListAdapter mAdapter;
@@ -32,7 +31,6 @@ public class ChatFragment extends android.support.v4.app.Fragment {
     private Button mShootButton;
     private Random r = new Random();
     private String name = "User" + r.nextInt(9999); //userID during a chat.
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +51,7 @@ public class ChatFragment extends android.support.v4.app.Fragment {
             protected void populateView(View view, Chat c) {
                 ((TextView)view.findViewById(android.R.id.text1)).setText(c.getName());
                 ((TextView)view.findViewById(android.R.id.text2)).setText(c.getMessage());
+
             }
         };
 

@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 
+import com.firebase.client.Firebase;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -28,6 +30,7 @@ public class DatePickerFragment extends DialogFragment {
     private static final String ARG_DATE = "date";
 
     private DatePicker mDatePicker;
+
 
     public static DatePickerFragment newInstance(Date date) {
         Bundle args = new Bundle();

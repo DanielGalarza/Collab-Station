@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,10 +16,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 //import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Controller class
@@ -39,6 +51,11 @@ public class TodoListFragment extends Fragment {
     private int mLastAdapterClickPosition = -1;
     private boolean mSubtitleVisible;
 
+    private Firebase mFirebase;
+    String dummy = "";                                  ////////////////TEST
+
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +64,14 @@ public class TodoListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_todo_list, container, false);
+
+        //Giving the Firebase an Android context.
+        Firebase.setAndroidContext(getActivity());
+        //Our Firebase Reference.
+        mFirebase = new Firebase("https://collaborationstation.firebaseio.com/todo");
+
 
         mTodoRecyclerView = (RecyclerView) view.findViewById(R.id.todo_recycler_view);
         mTodoRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -92,16 +116,19 @@ public class TodoListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_new_todo:
-                Todo todo = new Todo();
+
+                Todo todo = new Todo(dummy);                ////////////////TEST
                 TodoLab.get(getActivity()).addTodo(todo);
                 Intent intent = TodoPagerActivity.newIntent(getActivity(), todo.getId());
                 startActivity(intent);
                 return true;
+
             case R.id.menu_item_show_subtitle:
                 mSubtitleVisible = !mSubtitleVisible;
                 getActivity().invalidateOptionsMenu();
                 updateSubtitle();
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -122,22 +149,25 @@ public class TodoListFragment extends Fragment {
     }
 
     private void updateUI() {
+
         TodoLab todoLab = TodoLab.get(getActivity());
         List<Todo> todos = todoLab.getTodos();
 
-        if (mAdapter == null) {
-            mAdapter = new TodoAdapter(todos);
-            mTodoRecyclerView.setAdapter(mAdapter);
-        } else {
-            //mAdapter.notifyDataSetChanged();
-            if (mLastAdapterClickPosition < 0) {
-                mAdapter.notifyDataSetChanged();
+            if (mAdapter == null) {
+                mAdapter = new TodoAdapter(todos);
+                mTodoRecyclerView.setAdapter(mAdapter);
+
             } else {
-                mAdapter.notifyItemChanged(mLastAdapterClickPosition);
-                mLastAdapterClickPosition = -1;
+                //mAdapter.notifyDataSetChanged();
+                if (mLastAdapterClickPosition < 0) {
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    mAdapter.notifyItemChanged(mLastAdapterClickPosition);
+                    mLastAdapterClickPosition = -1;
+                }
             }
-        }
-        updateSubtitle();
+            updateSubtitle();
+
     }
 
     // custom ViewHolder maintains reference to view (TextView)
@@ -149,7 +179,9 @@ public class TodoListFragment extends Fragment {
         private TextView mDateTextView;
         private CheckBox mTaskCompleteCheckBox;
 
+
         public TodoHolder(View itemView) {
+
             super(itemView);
             itemView.setOnClickListener(this);
 
@@ -158,14 +190,86 @@ public class TodoListFragment extends Fragment {
             mDateTextView = (TextView)itemView.findViewById(R.id.list_item_todo_date_text_view);
             mTaskCompleteCheckBox = (CheckBox)itemView.findViewById(R.id.list_item_todo_complete_check_box);
 
+            mTaskCompleteCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    //mTodo.setTodoComplete(isChecked);
+                    mFirebase.child(mTodo.getId().toString() + "/todoComplete").setValue(isChecked);
+                }
+            });
+
         }
 
         public void bindTodo(Todo todo) {
             mTodo = todo;
-            mTitleTextView.setText(mTodo.getTitle());
-            mDescriptionView.setText(mTodo.getDescription());
+
+           // mTitleTextView.setText(mTodo.getTitle());
+
+
+            mFirebase.child(mTodo.getId().toString() + "/title").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    mTitleTextView.setText(dataSnapshot.getValue().toString());
+                    //mTitleField.setSelection(mTitleField.getText().length());
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+
+
+
+            //mDescriptionView.setText(mTodo.getDescription());
+
+            mFirebase.child(mTodo.getId().toString() + "/description").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    mDescriptionView.setText(dataSnapshot.getValue().toString());
+                    //mTitleField.setSelection(mTitleField.getText().length());
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+
             mDateTextView.setText(DateFormat.format("EEEE, MMM dd, yyyy", mTodo.getDate()).toString());
-            mTaskCompleteCheckBox.setChecked(mTodo.isTodoComplete());
+
+                    mFirebase.child(mTodo.getId().toString() + "/date").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            //mDateTextView.setText(DateFormat.format("EEEE, MMM dd, yyyy", (Date) dataSnapshot.getValue()));
+                            //Log.d("date", (String) DateFormat.format("EEEE, MMM dd, yyyy", (Date) dataSnapshot.getValue()));
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+
+                        }
+                    });
+
+            //mTaskCompleteCheckBox.setChecked(mTodo.isTodoComplete());
+            mFirebase.child(mTodo.getId().toString() + "/todoComplete").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    mTaskCompleteCheckBox.setChecked((boolean)dataSnapshot.getValue());
+
+                    //mFirebase.child(mTodo.getId().toString() + "/todoComplete").setValue(isChecked);
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+
+
+
         }
 
         @Override
@@ -189,8 +293,8 @@ public class TodoListFragment extends Fragment {
 
         public TodoAdapter(List<Todo> todos) {
             mTodos = todos;
-        }
 
+        }
 
         @Override
         public TodoHolder onCreateViewHolder(ViewGroup parent, int viewType) {

@@ -20,15 +20,17 @@ import java.util.UUID;
  */
 public class TodoPagerActivity extends AppCompatActivity {
 
-    private static final String EXTRA_CRIME_ID = "com.example.danielgalarza.collabstation.crime_id";
+    private static final String EXTRA_TODO_ID = "com.example.danielgalarza.collabstation.crime_id";
 
     private ViewPager mViewPager;
     private List<Todo> mTodos;
 
     public static Intent newIntent(Context packageContext, UUID todoID) {
+        
         Intent intent = new Intent(packageContext, TodoPagerActivity.class);
-        intent.putExtra(EXTRA_CRIME_ID, todoID);
+        intent.putExtra(EXTRA_TODO_ID, todoID);
         return intent;
+        
     }
 
     @Override
@@ -36,7 +38,7 @@ public class TodoPagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo_pager);
 
-        UUID todoID = (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
+        UUID todoID = (UUID) getIntent().getSerializableExtra(EXTRA_TODO_ID);
 
         mViewPager = (ViewPager) findViewById(R.id.activity_todo_pager_view_pager);
 

@@ -14,22 +14,32 @@ public class Todo {
     private String mDescription;
     private Date mDate;
     private SimpleDateFormat mFormattedDate;
-
     private boolean mTodoComplete;
 
 
-
     public Todo() {
-        //Generate unique identifier
-        mId = UUID.randomUUID();
-        //Generate date
-        mDate = new Date();
+    }
+
+
+    public Todo(String dummy) {
+
+        mId = UUID.randomUUID();           //Generate unique identifier
+        mDate = new Date();                //Generate date
         mFormattedDate = new SimpleDateFormat("MMM-d-yyyy");
+        mTitle = "";
+        mDescription = "";
+
+
+        //mTodoComplete = false;
 
     }
 
     public UUID getId() {
         return mId;
+    }
+
+    public void setId(UUID id) {
+        mId = id;
     }
 
     public String getTitle() {

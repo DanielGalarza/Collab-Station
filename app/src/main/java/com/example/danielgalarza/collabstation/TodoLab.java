@@ -2,6 +2,8 @@ package com.example.danielgalarza.collabstation;
 
 import android.content.Context;
 
+import com.firebase.client.Firebase;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +46,7 @@ public class TodoLab {
     }
 
     public Todo getTodo(UUID id) {
+
         for (Todo todo : mTodos) {
             if (todo.getId().equals(id)) {
                 return todo;

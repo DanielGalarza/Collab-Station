@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +20,17 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -36,6 +45,7 @@ public class TodoFragment extends Fragment {
     private static final String DIALOG_DELETE = "DialogDelete";
 
     private static final int REQUEST_DATE = 0;
+    //private String
 
     private Todo mTodo;
     private EditText mTitleField;
@@ -44,6 +54,11 @@ public class TodoFragment extends Fragment {
     private Button mBackButton;
     private Button mDeleteButton;
     private CheckBox mTaskCompleteCheckBox;
+
+    private Firebase mFirebase;
+    Todo firebaseTodo = new Todo();
+    Map<String, Object> values = new HashMap<>();
+
 
     // call newInstance when creating a TodoFragment
     public static TodoFragment newInstance(UUID todoID) {
@@ -64,6 +79,15 @@ public class TodoFragment extends Fragment {
         // pass as Bundle instead of single extra (above)
         UUID todoID = (UUID) getArguments().getSerializable(ARG_TODO_ID);
         mTodo = TodoLab.get(getActivity()).getTodo(todoID);
+
+        //Giving the Firebase an Android context.
+        Firebase.setAndroidContext(getActivity());
+        //Our Firebase Reference.
+        mFirebase = new Firebase("https://collaborationstation.firebaseio.com/todo");
+
+        //
+        mFirebase.child(mTodo.getId().toString()).setValue(mTodo);
+
     }
 
 
@@ -72,8 +96,49 @@ public class TodoFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_todo, container, false);
 
+
+        /*****************************************************************************************/
+
+        mDeleteButton = (Button) rootView.findViewById(R.id.delete_btn);
+        mDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //DialogFragment dialog = new DeleteFragment();
+                //dialog.show(getFragmentManager(), DIALOG_DELETE);
+
+                Toast.makeText(getActivity(), "Task removed", Toast.LENGTH_SHORT).show();
+                TodoLab.get(getActivity()).removeTodo(mTodo);
+
+                getActivity().finish();
+
+
+                Log.d("finish", "finished");
+
+                //remove from firebase
+                //Firebase temp = new Firebase("https://collaborationstation.firebaseio.com/todo/" + mTodo.getId());
+                //temp.removeValue();
+
+            }
+        });
+
+        /*****************************************************************************************/
         mTitleField = (EditText) rootView.findViewById(R.id.todo_title);
-        mTitleField.setText(mTodo.getTitle());
+        //mTitleField.setText(mTodo.getTitle());
+        // Set title field to value from database
+        mFirebase.child(mTodo.getId().toString() + "/title").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mTitleField.setText(dataSnapshot.getValue().toString());
+                mTitleField.setSelection(mTitleField.getText().length());
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -83,16 +148,33 @@ public class TodoFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mTodo.setTitle(s.toString());
+                mFirebase.child(mTodo.getId().toString() + "/title").setValue(s.toString());
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 // Intentionally left blank
+
+            }
+        });
+        /*****************************************************************************************/
+        mDescriptionField = (EditText) rootView.findViewById(R.id.todo_description);
+        //mDescriptionField.setText(mTodo.getDescription());
+        // get description field from database
+        mFirebase.child(mTodo.getId().toString() + "/description").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mDescriptionField.setText(dataSnapshot.getValue().toString());
+                mDescriptionField.setSelection(mDescriptionField.getText().length());
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
             }
         });
 
-        mDescriptionField = (EditText) rootView.findViewById(R.id.todo_description);
-        mDescriptionField.setText(mTodo.getDescription());
         mDescriptionField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -102,6 +184,7 @@ public class TodoFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mTodo.setDescription(s.toString());
+                mFirebase.child(mTodo.getId().toString() + "/description").setValue(s.toString());
             }
 
             @Override
@@ -109,7 +192,7 @@ public class TodoFragment extends Fragment {
                 // Intentionally left blank
             }
         });
-
+        /*****************************************************************************************/
         //wire up button to select deadline date
         mDateButton = (Button) rootView.findViewById(R.id.todo_date);
         //mDateButton.setText(mTodo.getDate().toString());
@@ -125,7 +208,7 @@ public class TodoFragment extends Fragment {
                 dialog.show(manager, DIALOG_DATE);
             }
         });
-
+        /*****************************************************************************************/
         mBackButton = (Button) rootView.findViewById(R.id.back_btn);
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,31 +217,37 @@ public class TodoFragment extends Fragment {
             }
         });
 
-        mDeleteButton = (Button) rootView.findViewById(R.id.delete_btn);
-        mDeleteButton.setOnClickListener(new View.OnClickListener() {
+        /*****************************************************************************************/
+        //wire up checkbox for completed task items
+        mTaskCompleteCheckBox = (CheckBox) rootView.findViewById(R.id.todo_complete);
+        //mTaskCompleteCheckBox.setChecked(mTodo.isTodoComplete());
+        // get isComplete from database
+        mFirebase.child(mTodo.getId().toString() + "/todoComplete").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                //DialogFragment dialog = new DeleteFragment();
-                //dialog.show(getFragmentManager(), DIALOG_DELETE);
+                mTaskCompleteCheckBox.setChecked((boolean)dataSnapshot.getValue());
+                Log.d("checked?" , dataSnapshot.getValue().toString() );
 
-                Toast.makeText(getActivity(), "Task removed", Toast.LENGTH_SHORT).show();
-                TodoLab.get(getActivity()).removeTodo(mTodo);
-                getActivity().finish();
+                //mFirebase.child(mTodo.getId().toString() + "/todoComplete").setValue(isChecked);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
             }
         });
 
-        //wire up checkbox for completed task items
-        mTaskCompleteCheckBox = (CheckBox) rootView.findViewById(R.id.todo_complete);
-        mTaskCompleteCheckBox.setChecked(mTodo.isTodoComplete());
+
         mTaskCompleteCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //set the task's complete property
                 mTodo.setTodoComplete(isChecked);
+                mFirebase.child(mTodo.getId().toString() + "/todoComplete").setValue(isChecked);
             }
         });
-
+        /*****************************************************************************************/
         //setContentView(R.layout.fragment_todo);
         return rootView;
 
@@ -169,6 +258,7 @@ public class TodoFragment extends Fragment {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
+
         if (requestCode == REQUEST_DATE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mTodo.setDate(date);
@@ -179,6 +269,7 @@ public class TodoFragment extends Fragment {
     private void updateDate() {
         //mDateButton.setText(mTodo.getDate().toString());
         mDateButton.setText(DateFormat.format("EEEE, MMM dd, yyyy", mTodo.getDate()).toString());
+        mFirebase.child(mTodo.getId().toString() + "/date").setValue(mTodo.getDate());
     }
 
 
