@@ -67,10 +67,14 @@ public class TodoListFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_todo_list, container, false);
 
-        //Giving the Firebase an Android context.
+        // Giving the Firebase an Android context.
         Firebase.setAndroidContext(getActivity());
-        //Our Firebase Reference.
+
+        // Our Firebase Reference.
         mFirebase = new Firebase("https://collaborationstation.firebaseio.com/todo");
+
+        //  For testing purposes
+        mFirebase.removeValue();
 
 
         mTodoRecyclerView = (RecyclerView) view.findViewById(R.id.todo_recycler_view);
