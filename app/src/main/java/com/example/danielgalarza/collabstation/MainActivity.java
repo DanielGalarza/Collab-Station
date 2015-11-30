@@ -1,5 +1,6 @@
 package com.example.danielgalarza.collabstation;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -11,9 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.os.Bundle;
-import android.widget.TextView;
-
-import java.util.Random;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -22,8 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ActionBarDrawerToggle mDrawerToggle;
     private NavigationView nvDrawer;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +48,35 @@ public class MainActivity extends AppCompatActivity {
 
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
+
+        /********* ANIMATION ****************/
+        final ImageView iv = (ImageView)findViewById(R.id.imageView2);
+        final Animation animCamera = AnimationUtils.loadAnimation(getBaseContext(), R.anim.rotate);
+        final Animation fadeOut = AnimationUtils.loadAnimation(getBaseContext(), R.anim.fade_out);
+
+
+        iv.startAnimation(animCamera);
+
+        animCamera.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                iv.startAnimation(fadeOut);
+                iv.startAnimation(animCamera);
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                iv.startAnimation(animCamera);
+
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
 
 
     }
@@ -88,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.nav_todo_fragment:
                 fragmentClass = TodoListFragment.class;
                 break;
-            case R.id.nav_third_fragment:
-                fragmentClass = OtherFragment.class; ///////////// LEFT OVER FRAG
+            case R.id.nav_home_fragment:
+                fragmentClass = WelcomeFragment.class;
                 break;
             default:
                 fragmentClass = ChatFragment.class;
@@ -108,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         // Highlight the selected item, update the title, and close the drawer
         menuItem.setChecked(true);
         setTitle(menuItem.getTitle());
+
         mDrawer.closeDrawers();
     }
 
@@ -136,6 +165,13 @@ public class MainActivity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
         mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
     }
 
 }
