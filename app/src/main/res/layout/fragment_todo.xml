@@ -1,85 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/toolbar"
+    tools:context=".MainActivity"
+    android:background="#ccf75f">
 
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="#87d5f7">
-
-    <TextView
-        android:layout_marginTop="32dp"
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/todo_title_label"
-        style="?android:listSeparatorTextViewStyle"/>
-
-    <EditText android:id="@+id/todo_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/todo_title_hint"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/todo_details_label"
-        style="?android:listSeparatorTextViewStyle"/>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:text="@string/todo_description"
-        android:id="@+id/todo_description"
-        />
-
-    <CheckBox
-        android:id="@+id/todo_complete"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/todo_complete_label"/>
-
-    <Button
-        android:id="@+id/todo_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp"
-        android:background="#BAE7FA"/>
+        android:layout_height="match_parent"
+        android:id="@+id/todo_list_view"
+        android:transcriptMode="normal"
+        android:layout_above="@+id/Bottom2"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="50dp"
+        android:background="#ccf75f"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/Bottom2"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="#e4faac">
 
-        <Button
-            android:layout_weight="1"
-            android:id="@+id/back_btn"
-            android:text="@string/back_btn"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/new_todo_title"
+            android:textSize="20sp"
+            android:singleLine="true"
+            android:layout_marginBottom="20dp"/>
+
+        <EditText
+            android:id="@+id/new_title"
+            android:textStyle="italic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginRight="8dp"
-            android:background="#BAE7FA"/>
+            android:singleLine="true"
+            android:inputType="textShortMessage"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="100dp"/>
 
-        <Button
-            android:layout_weight="1"
-            android:id="@+id/delete_btn"
-            android:text="@string/delete_btn"
+        <EditText
+            android:id="@+id/new_date"
+            android:textStyle="italic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginRight="16dp"
-            android:background="#BAE7FA"/>
+            android:singleLine="true"
+            android:inputType="textShortMessage"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="100dp"/>
+
+        <EditText
+            android:id="@+id/new_description"
+            android:textStyle="italic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:inputType="textShortMessage"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="100dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/create_button"
+                android:text="@string/push_new_todo"
+                android:layout_weight="2"/>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/is_complete"
+                android:textStyle="italic"
+                android:text="@string/complete"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

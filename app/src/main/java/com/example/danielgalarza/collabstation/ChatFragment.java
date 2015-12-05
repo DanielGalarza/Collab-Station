@@ -33,21 +33,21 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 
     private Firebase mFirebase;
     private ListView mMessagesView;
-    private FirebaseListAdapter mAdapter;
+    private FirebaseListAdapter mChatAdapter;
     private EditText mMessageText;
     private Button mShootButton;
     private Button mShootLocation;
     private Random r = new Random();
-    private String name = "User" + r.nextInt(9999); //userID during a chat.
+    String name = "User" + r.nextInt(9999); //userID during a chat.
 
-    private double lat;
-    private double lon;
+
+    private double lat;      //Latitude
+    private double lon;      //Longitude
     private LocationManager locationManager;
     private Criteria criteria;
     private Location myLocation;
-    private String provider;
+    private String provider;        //Name of the best location provider: GPS, WIFI, CELLULAR.
     String mapsURL;
-
     LocationListener listener;
 
     @Override
@@ -55,7 +55,6 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
         setUpLocStuff();
-
 
         /** FIREBASE **/
         //List View for chat messages.
@@ -66,24 +65,25 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         mFirebase = new Firebase("https://collaborationstation.firebaseio.com/chat");
 
         //Setting a Firebase List Adapter to facilitate the name and message from each user.
-        mAdapter = new FirebaseListAdapter<Chat>(getActivity(), Chat.class, R.layout.message_item_layout, mFirebase) {
+        mChatAdapter = new FirebaseListAdapter<Chat>(getActivity(), Chat.class, R.layout.message_item_layout, mFirebase) {
 
             @Override
             protected void populateView(View view, Chat c) {
 
-                ((TextView)view.findViewById(android.R.id.text1)).setText(c.getName());
-                ((TextView)view.findViewById(android.R.id.text2)).setText(c.getMessage() + "    " + c.getMapURL());
+                ((TextView)view.findViewById(R.id.user)).setText(c.getName());
+                ((TextView)view.findViewById(R.id.message)).setText(c.getMessage() + "    " + c.getMapURL());
 
             }
         };
 
         //giving the List View the Firebase List Adapter.
-        mMessagesView.setAdapter(mAdapter);
+        mMessagesView.setAdapter(mChatAdapter);
 
         /***** VIEW STUFF *****/
         mMessageText = (EditText) rootView.findViewById(R.id.text_edit);  //Input for chat messages.
         mShootButton = (Button) rootView.findViewById(R.id.shoot_button); //Button to send message.
         mShootLocation = (Button) rootView.findViewById(R.id.send_location);
+
 
 
         mShootButton.setOnClickListener(new View.OnClickListener() {
@@ -126,15 +126,14 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 
     }//End of onCreateView
 
-    /*********************************************************************************************/
+    /*********************   GET LOCATION AS URL   ************************************************/
 
     public void getLocation(Location loc){
         Log.d("LOCATION", "LAT: " + loc.getLatitude() + "     LONG: " + loc.getLongitude());
         mapsURL = "https://maps.google.com/?q=" + loc.getLatitude() + "," + loc.getLongitude();
-
     }
 
-    /*********************************************************************************************/
+    /*********************   REQUESTING LOCATION UPDATES   ****************************************/
 
     private void reqLocUpdates(String provider, int time, int minDistance, LocationListener listener) {
         if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -143,7 +142,7 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    /*********************************************************************************************/
+    /*********************   SETTING UP LOCATION SENSORS  *****************************************/
 
     private void setUpLocStuff() {
 
@@ -160,7 +159,6 @@ public class ChatFragment extends android.support.v4.app.Fragment {
             startActivity(intent);
         }
 
-
         // New criteria object to retrieve provider
         criteria = new Criteria();
 
@@ -172,7 +170,6 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 
             // Get last known location
             myLocation = locationManager.getLastKnownLocation(provider);
-
         }
 
         if(myLocation != null) {
@@ -180,12 +177,9 @@ public class ChatFragment extends android.support.v4.app.Fragment {
             // Get the lat and lng of current location
             lat = myLocation.getLatitude();
             lon = myLocation.getLongitude();
-
-            // mark my location on map with marker
         }
 
-
-        /**************************    LOCATION LISTENER    ***************************************/
+        /***********************    LOCATION LISTENER    ***************************************/
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -213,9 +207,9 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 
     }// End of setUpMap()
 
-    /*********************************************************************************************/
+    /****************************  TEST MESSAGES  *************************************************/
 
-    //TEST
+
     public void createMessages() {
 
         //TEST MESSAGES
@@ -238,9 +232,8 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         mFirebase.push().setValue(msg6);
     }
 
-    /*********************************************************************************************/
+    /**************************   FRAGMENT LIFE CYCLE       ***************************************/
 
-    /** FOR TESTING PURPOSES **/
     @Override
     public void onStart() {
 
@@ -268,43 +261,20 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 
     }
 
-    /*********************************************************************************************/
-
     @Override
     public void onDestroy() {
 
         super.onDestroy();
         //Cleans up the message board when app is destroyed.
-        mAdapter.cleanup();
+        mChatAdapter.cleanup();
 
         if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
 
             // Get last known location
             locationManager.removeUpdates(listener);
-
-
         }
-
     }
-    /*********************************************************************************************/
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-
-            // Remove updates
-            locationManager.removeUpdates(listener);
-
-
-        }
-
-    }
-
-    /*********************************************************************************************/
 
     @Override
     public void onResume() {
@@ -315,11 +285,21 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 
             // resume updates
             reqLocUpdates(provider, 1, 0, listener);
-
-
         }
-
     }
 
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+
+        // Remove updates
+        locationManager.removeUpdates(listener);
+
+        }
+    }
 
 }

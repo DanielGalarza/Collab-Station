@@ -2,6 +2,7 @@ package com.example.danielgalarza.collabstation;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.preference.PreferenceActivity;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,9 +13,15 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.os.Bundle;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -54,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         final Animation animCamera = AnimationUtils.loadAnimation(getBaseContext(), R.anim.rotate);
         final Animation fadeOut = AnimationUtils.loadAnimation(getBaseContext(), R.anim.fade_out);
 
-
+        //Starting animation
         iv.startAnimation(animCamera);
 
         animCamera.setAnimationListener(new Animation.AnimationListener() {
@@ -77,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
 
     }
 
@@ -114,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 fragmentClass = ChatFragment.class;
                 break;
             case R.id.nav_todo_fragment:
-                fragmentClass = TodoListFragment.class;
+                fragmentClass = TodoFragment.class;
                 break;
             case R.id.nav_home_fragment:
                 fragmentClass = WelcomeFragment.class;
@@ -159,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -168,9 +173,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
+    public void onStart() {
+        super.onStart();
 
     }
 

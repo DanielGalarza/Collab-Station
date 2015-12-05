@@ -64,7 +64,7 @@
                 android:text="@string/swipe"
                 android:id="@+id/textView5"
                 android:layout_gravity="left|top"
-                android:textSize="30sp"
+                android:textSize="20sp"
                 />
         </FrameLayout>
     </LinearLayout>

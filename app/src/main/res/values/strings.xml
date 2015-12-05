@@ -4,7 +4,8 @@
     <string name="swipe"> "START BY SWIPING FROM THE LEFT HAND SIDE</string>
     <string name="desc">
         This tool is designed for collaboration between students that want or need to work with others.
-        There is a chat function and a to-do list function. Feel free to use those to your advantage.</string>
+        There is a chat function and a to-do list function. Feel free to use those to your advantage.
+        HINT: TRY CHANGING SCREEN ORIENTATION TO GET SOME FUN ANIMATION!</string>
 
     <string name="app_name">Collaboration Station</string>
     <string name="header">Welcome!</string>
@@ -29,6 +30,12 @@
     <string name="subtitle_format">%1$s todo items</string>
     <string name="back_btn">Back to list</string>
     <string name="delete_btn">Delete this item</string>
+    <string name="new_todo_title">Create A New To-do Here!</string>
+    <string name="push_new_todo">Create</string>
+    <string name="complete">Is This Complete?</string>
+    <string name="menu_delete">Delete</string>
+
+
 
 
 </resources>
